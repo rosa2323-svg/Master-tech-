@@ -20,8 +20,7 @@ jobs:
       - name: Create Database Backup
         run: |
           mkdir -p backups
-          pg_dump "\({{ secrets.SUPABASE_DB_URL }}" -F c -b -v -f "backups/backup_\)(date +'%Y%m%d_%H%M%S').dump"
-
+          pg_dump "${{ secrets.SUPABASE_DB_URL }}" -F c -b -v -f "backups/backup_$(date +'%Y%m%d_%H%M%S').dump"
       - name: Commit and push backup
         run: |
           git config --global user.name "github-actions[bot]"
