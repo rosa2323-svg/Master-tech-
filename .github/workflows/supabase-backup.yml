@@ -18,7 +18,7 @@ jobs:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
           mkdir -p supabase/migrations
-          docker run --rm -u \((id -u):\)(id -g) -v \({{ github.workspace }}:/workspace -w /workspace postgres:17-alpine pg_dump "\)SUPABASE_DB_URL" --schema-only --no-owner --no-acl -f supabase/migrations/esquema_actualizado.sql
+          docker run --rm -v \({{ github.workspace }}:/workspace -w /workspace postgres:17-alpine sh -c "pg_dump '\)SUPABASE_DB_URL' --schema-only --no-owner --no-acl -f supabase/migrations/esquema_actualizado.sql && chown -R \((id -u):\)(id -g) supabase/migrations"
 
       - name: Verify generated file
         run: |
