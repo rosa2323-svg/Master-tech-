@@ -9,6 +9,10 @@ jobs:
   backup:
     runs-on: ubuntu-latest
     
+    # 1. Agregamos los permisos de escritura para el GITHUB_TOKEN
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
