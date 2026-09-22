@@ -22,10 +22,11 @@ jobs:
 
       - name: Dump Remote Database Schema
         env:
-          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
           mkdir -p supabase/migrations
-          pg_dump "$DATABASE_URL" --schema-only --no-owner --no-acl > supabase/migrations/esquema_actualizado.sql
+          # Usamos un comando directo de postgres para volcar el esquema usando la URI completa
+          pg_dump "$SUPABASE_DB_URL" --schema-only --no-owner --no-acl -f supabase/migrations/esquema_actualizado.sql
 
       - name: Commit and Push changes if schema changed
         uses: stefanzweifel/git-auto-commit-action@v5
