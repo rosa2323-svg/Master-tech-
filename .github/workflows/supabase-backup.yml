@@ -25,8 +25,8 @@ jobs:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
           mkdir -p supabase/migrations
-          pg_dump "$SUPABASE_DB_URL" --schema-only --no-owner --no-acl -f supabase/migrations/esquema_actualizado.sql
-
+          pg_dump "$SUPABASE_DB_URL" --schema-only --no-owner --no-acl --no-version-check -f supabase/migrations/esquema_actualizado.sql
+          
       - name: Commit and Push changes if schema changed
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
