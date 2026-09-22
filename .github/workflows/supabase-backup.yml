@@ -19,10 +19,10 @@ jobs:
 
       - name: Create Database Backup
         env:
-          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
           mkdir -p backups
-          pg_dump -d "\(DATABASE_URL" -F c -b -v -f "backups/backup_\)(date +'%Y%m%d_%H%M%S').dump"
+          pg_dump "\(SUPABASE_DB_URL" -F c -b -v -f "backups/backup_\)(date +'%Y%m%d_%H%M%S').dump"
 
       - name: Commit and push backup
         run: |
