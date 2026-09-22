@@ -1,34 +1,31 @@
 name: Auto Backup DB Schema
 
 on:
-  push:
-    branches: [ "main", "master" ]
-  workflow_dispatch:
+  workflow_dispatch: 
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
   backup:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup Supabase CLI
-        uses: supabase/setup-cli@v1
-        with:
-          version: latest
 
       - name: Dump Remote Database Schema
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
           mkdir -p supabase/migrations
-          pg_dump "$SUPABASE_DB_URL" --schema-only --no-owner --no-acl --no-version-check -f supabase/migrations/esquema_actualizado.sql
-          
-      - name: Commit and Push changes if schema changed
+          docker run --rm -u \((id -u):\)(id -g) -v \({{ github.workspace }}:/workspace -w /workspace postgres:17-alpine pg_dump "\)SUPABASE_DB_URL" --schema-only --no-owner --no-acl -f supabase/migrations/esquema_actualizado.sql
+
+      - name: Verify generated file
+        run: |
+          ls -la supabase/migrations/esquema_actualizado.sql
+
+      - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore: auto-backup database schema from Supabase"
-          file_pattern: "supabase/migrations/*.sql"
+          commit_message: "chore: auto-update database schema backup"
+          file_pattern: "supabase/migrations/esquema_actualizado.sql"
